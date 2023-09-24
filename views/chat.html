@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat-folio</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f7f7;
+      }
+
+      .chat-container {
+        max-width: 800px;
+        margin: 50px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .chat-header {
+        background-color: #dda600;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 18px;
+        text-align: center;
+      }
+
+      .chat-messages {
+        padding: 20px;
+        overflow-y: auto;
+        max-height: 400px;
+      }
+
+      .user-message,
+      .bot-message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+      }
+
+      .user-message {
+        background-color: #dcf8c6;
+        align-self: flex-start;
+      }
+
+      .bot-message {
+        background-color: #eaeaea;
+        align-self: flex-end;
+      }
+
+      .input-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f5f5f5;
+      }
+
+      .input-box {
+        flex-grow: 1;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      .send-button {
+        background-color: #dda600;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 15px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">Chat Folio</div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Chat messages will appear here -->
+      </div>
+      <div class="input-container">
+        <input
+          type="text"
+          class="input-box"
+          id="userInput"
+          placeholder="Type your Message..."
+        />
+        <button class="send-button" id="sendMessage">Send</button>
+      </div>
+    </div>
+    <script>
+      const chatMessages = document.getElementById("chatMessages");
+      const inputMessage = document.getElementById("userInput");
+      const sendButton = document.getElementById("sendMessage");
+      document.addEventListener("DOMContentLoaded", () => {
+        sendButton.addEventListener("click", async () => {
+          showLoading();
+          const prompt = inputMessage.value.trim();
+          if (prompt === "") return;
+
+          // Send a POST request to the /answer endpoint
+          const response = await fetch("/answer", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt }),
+          });
+
+          if (response.ok) {
+            hideLoading();
+            const data = await response.json();
+            const answer = data.res;
+
+            console.log(answer);
+
+            // Display the user's input and the AI's answer in the chat interface
+            chatMessages.innerHTML += `<p>User: ${prompt}</p>`;
+            chatMessages.innerHTML += `<p>AI: ${answer.text}</p>`;
+
+            // Clear the input field
+            inputMessage.value = "";
+          }
+        });
+      });
+
+      function showLoading() {
+        const loadingDiv = document.createElement("div");
+        loadingDiv.classList.add("loading");
+        loadingDiv.textContent = "Loading...";
+
+        chatMessages.appendChild(loadingDiv);
+      }
+      function hideLoading() {
+        const loadingDiv = document.querySelector(".loading");
+        if (loadingDiv) {
+          chatMessages.removeChild(loadingDiv);
+        }
+      }
+    </script>
+  </body>
+</html>

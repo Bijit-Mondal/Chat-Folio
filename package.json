@@ -2,10 +2,13 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts"
   },
+  "type": "module",
   "dependencies": {
-    "@google-ai/generativelanguage": "^1.0.1",
-    "google-auth-library": "^9.0.0",
-    "hono": "^3.6.0"
+    "hono": "^3.6.0",
+    "langchain": "^0.0.150",
+    "typescript": "^5.2.2",
+    "pdf-parse": "^1.1.1",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "bun-types": "^0.6.2"

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Interface</title>
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat-messages">
+      <!-- Chat messages will be displayed here -->
+    </div>
+    <input type="text" id="input-message" placeholder="Type your message...">
+    <button id="send-button">Send</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatMessages = document.getElementById('chat-messages');
+      const inputMessage = document.getElementById('input-message');
+      const sendButton = document.getElementById('send-button');
+
+      sendButton.addEventListener('click', async () => {
+        const prompt = inputMessage.value.trim();
+        if (prompt === '') return;
+
+        // Send a POST request to the /answer endpoint
+        const response = await fetch('/answer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const answer = data.res;
+
+          console.log(answer);
+
+          // Display the user's input and the AI's answer in the chat interface
+          chatMessages.innerHTML += `<p>User: ${prompt}</p>`;
+          chatMessages.innerHTML += `<p>AI: ${answer.text}</p>`;
+
+          // Clear the input field
+          inputMessage.value = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
